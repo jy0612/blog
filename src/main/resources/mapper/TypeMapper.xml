@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whpu.blog.dao.TypeDao">
+    <select id="selectAllTypesByNums" resultType="com.whpu.blog.pojo.Type">
+        select b.type_id as id,count(b.type_id) as nums,t.name from tb_blog b,tb_type t
+        where b.type_id=t.id group by b.type_id order by nums desc limit 5
+    </select>
+</mapper>

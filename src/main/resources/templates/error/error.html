@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误</title>
+    <th:block th:replace="_fragments :: csslink"></th:block>
+</head>
+<body>
+<!--导航-->
+<nav th:replace="_fragments :: menu(0)"></nav>
+<!--中间内容-->
+<div class="base-container-small base-padded-tb-largest">
+    <div class="ui error message" >
+        <div class="ui container">
+            <h1>出问题了啊！看看源码到底错在哪里吧。( >﹏<。)</h1>
+            <p>好烦哦，又出bug！！！</p>
+        </div>
+    </div>
+</div>
+<!--底部footer-->
+<footer th:replace="_fragments :: footer"></footer>
+<!--错误信息-->
+<div>
+    <div th:utext="'&lt;!--'" th:remove="tag"></div>
+    <div th:utext="'Failed Request URL : ' + ${url}" th:remove="tag"></div>
+    <div th:utext="'Exception message : ' + ${exception.message}" th:remove="tag"></div>
+    <ul th:remove="tag">
+        <li th:each="st : ${exception.stackTrace}" th:remove="tag"><span th:utext="${st}" th:remove="tag"></span></li>
+    </ul>
+    <div th:utext="'--&gt;'" th:remove="tag"></div>
+</div>
+
+<th:block th:replace="_fragments ::script"></th:block>
+<script type="text/javascript">
+    $('.menu.toggle').click(function () {
+        $('.base-item').toggleClass('base-mobile-hidden');
+    });
+</script>
+</body>
+</html>

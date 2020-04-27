@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whpu.blog.dao.BlogDao">
+
+    <resultMap id="blogMap" type="com.whpu.blog.dto.BlogQuery">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="recommend" property="recommend"></result>
+        <result column="update_time" property="updateTime"></result>
+        <result column="type_id" property="typeId"></result>
+        <association column="type_id" property="type"
+                     javaType="com.whpu.blog.pojo.Type" select="com.whpu.blog.dao.TypeDao.selectTypeById">
+        </association>
+    </resultMap>
+
+
+    <!--查询所有的文章部分信息-->
+    <select id="selectAllBlogs" resultMap="blogMap">
+        select b.id,b.title,b.recommend,b.update_time,b.type_id,t.id,t.name
+        from tb_blog b
+        left join tb_type t on b.type_id = t.id
+    </select>
+    <!--通过标题、分类进行条件查询-->
+    <select id="searchByTitleOrTypeOrRecommend" resultMap="blogMap" parameterType="com.whpu.blog.dto.SearchBlog">
+        select b.id,b.title,b.recommend,b.update_time,b.type_id,t.id,t.name
+        from tb_blog b,tb_type t
+        <where>
+            <bind name="bindTitle" value="'%' + title + '%'"></bind>
+            <if test="1 == 1">
+                b.type_id = t.id
+            </if>
+            <if test="typeId != null">
+                and b.type_Id = #{typeId}
+            </if>
+            <if test="recommend != null">
+                and b.recommend = #{recommend}
+            </if>
+            <if test="title != null">
+                and b.title like #{bindTitle}
+            </if>
+        </where>
+    </select>
+    <!--新增文章-->
+    <insert id="insertBlog" parameterType="com.whpu.blog.pojo.Blog">
+        insert into tb_blog values(default,#{title},#{content},#{firstPicture},
+        #{flag},#{views},#{appreciation},#{shareStatement},#{commentable},
+        #{recommend},#{createTime},#{updateTime},#{description},#{typeId},#{userId},#{tagIds})
+    </insert>
+    <!--修改文章-->
+    <update id="updateBlog" parameterType="com.whpu.blog.pojo.Blog">
+        update tb_blog set title=#{title},content=#{content},first_picture=#{firstPicture},
+        flag=#{flag},appreciation=#{appreciation},share_statement=#{shareStatement},
+        commentable=#{commentable},recommend=#{recommend},update_time=#{updateTime},
+        description=#{description},type_id=#{typeId},tag_ids=#{tagIds} where id=#{id}
+    </update>
+
+    <resultMap id="indexBlogMap" type="com.whpu.blog.dto.IndexBlog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="views" column="views"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="description" column="description"/>
+        <!--type-->
+        <result property="typeName" column="name"/>
+        <!--user-->
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+    <!--查询所有的IndexBlog，用于首页的展示-->
+    <select id="selectAllIndexBlogs" resultMap="indexBlogMap">
+        select b.id,b.title,b.first_picture,b.views,b.update_time,b.description,
+        t.name,u.nickname,u.avatar from tb_blog b,
+        tb_type t,tb_user u where b.type_id=t.id and b.user_id = u.id order by update_time desc
+    </select>
+    <!--主页通过文章标题和文章内容条件查询-->
+    <select id="selectBlogsByQuery" parameterType="java.lang.String" resultMap="indexBlogMap">
+        select b.id,b.title,b.first_picture,b.views,b.update_time,b.description,
+        t.name,u.nickname,u.avatar from tb_blog b,tb_type t,tb_user u
+        <where>
+            <bind name="bindValue" value="'%' + query+ '%'"/>
+            <if test="1 == 1">
+                b.type_id=t.id and b.user_id = u.id
+            </if>
+            <if test="query != null">
+                and (b.title like #{bindValue} or b.content like #{bindValue})
+            </if>
+        </where>
+    </select>
+    <!--通过分类id查询所有相关的文章-->
+    <select id="selectIndexBlogsByTypeId" parameterType="java.lang.Integer" resultMap="indexBlogMap">
+        select b.id,b.title,b.first_picture,b.views,b.update_time,b.description,
+        t.name,u.nickname,u.avatar from tb_blog b,tb_type t,tb_user u
+        where b.type_id=t.id and b.user_id = u.id and b.type_id=#{0} order by update_time desc
+    </select>
+    <resultMap id="indexBlogSecondMap" type="com.whpu.blog.dto.IndexBlog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="views" column="views"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="description" column="description"/>
+        <!--user-->
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <!--tags-->
+        <collection property="tags" column="id" select="com.whpu.blog.dao.TagDao.selectTagsByBlogId">
+        </collection>
+    </resultMap>
+    <!--通过标签id条件查询所有相关的文章-->
+    <select id="selectIndexBlogsByTagId" parameterType="java.lang.Integer" resultMap="indexBlogSecondMap">
+        select b.id,b.title,b.first_picture,b.views,b.update_time,b.description,
+        u.nickname,u.avatar from tb_blog b,tb_user u,tb_tag t,tb_blog_tags bt
+        where b.user_id=u.id and b.id=bt.blog_id and bt.tag_id=t.id and t.id=#{0} order by update_time desc
+    </select>
+    <!--文章详细数据-->
+    <resultMap id="detailedBlogMap" type="com.whpu.blog.dto.DetailedBlog">
+        <id property="id" column="bid"></id>
+        <result property="title" column="title"></result>
+        <result property="content" column="content"></result>
+        <result property="firstPicture" column="first_picture"></result>
+        <result property="flag" column="flag"></result>
+        <result property="views" column="views"></result>
+        <result property="appreciation" column="appreciation"></result>
+        <result property="shareStatement" column="share_statement"></result>
+        <result property="commentable" column="commentable"></result>
+        <result property="updateTime" column="update_time"></result>
+        <result property="nickname" column="nickname"></result>
+        <result property="avatar" column="avatar"></result>
+        <result property="typeName" column="type_name"></result>
+        <!--tags-->
+        <collection property="tags" ofType="com.whpu.blog.pojo.Tag">
+            <id property="id" column="tid"/>
+            <result property="name" column="name"/>
+        </collection>
+    </resultMap>
+    <!--查询文章详细内容-->
+    <select id="selectDetailedBlogById" parameterType="java.lang.Integer" resultMap="detailedBlogMap">
+        select b.id bid,b.title,b.content,b.first_picture,b.flag,b.views,
+        b.appreciation,b.share_statement,b.commentable,b.update_time, u.nickname,u.avatar,
+        type.name as type_name,t.id tid,t.name
+        from blog.tb_blog b,blog.tb_user u,blog.tb_blog_tags tb,blog.tb_type type,blog.tb_tag t
+        where b.user_id = u.id and tb.blog_id = b.id and tb.tag_id = t.id and b.type_id=type.id and b.id=#{0}
+    </select>
+    <!--归档查询-->
+    <resultMap id="achieve" type="com.whpu.blog.dto.AchieveBlog">
+        <id property="id" column="id"></id>
+        <result property="title" column="title"></result>
+        <result property="flag" column="flag"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="year" column="year"></result>
+    </resultMap>
+    <!--查询所有年份-->
+    <select id="selectGroupYear" resultType="java.lang.String">
+        select date_format(b.create_time,'%Y') as year from tb_blog b group by year order by year desc
+    </select>
+    <!--查询所有achieve按照年份划为一个List-->
+    <select id="selectAchievesByYear" resultMap="achieve">
+        select b.id,b.title,b.flag,b.create_time from tb_blog b where date_format(b.create_time, '%Y')=#{0}
+    </select>
+    <!--推荐blog-->
+    <resultMap id="recommendMap" type="com.whpu.blog.dto.RecommendBlog">
+        <id property="id" column="id"></id>
+        <result property="title" column="title"></result>
+        <result property="recommend" column="recommend"></result>
+    </resultMap>
+    <!--查询被推荐的blog-->
+    <select id="selectAllRecommendBlogs" resultMap="recommendMap">
+        select b.id,b.title,b.recommend from tb_blog b where b.recommend=true order by b.update_time desc limit 5
+    </select>
+</mapper>

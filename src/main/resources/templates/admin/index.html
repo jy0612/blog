@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog后台首页</title>
+  <th:block th:replace="admin/_fragments :: csslink"></th:block>
+</head>
+<body>
+<!--导航-->
+<nav th:replace="admin/_fragments ::menu(0)"></nav>
+<!--中间内容-->
+<div class="base-container-small base-padded-tb-largest animated bounceInUp">
+  <div class="ui container">
+    <div class="ui positive large message">
+      <h2>你是谁？？？竟然可以进入到这里，好厉害！</h2>
+      <p>欢迎光临｡:.ﾟヽ(｡◕‿◕｡)ﾉﾟ.:｡+ﾟ</p>
+    </div>
+  </div>
+</div>
+<!--底部footer-->
+<footer th:replace="admin/_fragments ::footer"></footer>
+
+<th:block th:replace="admin/_fragments ::script"></th:block>
+<script type="text/javascript">
+  $('.menu.toggle').click(function () {
+    $('.base-item').toggleClass('base-mobile-hidden');
+  });
+  $('.ui.dropdown').dropdown({
+    on: 'hover'
+  });
+</script>
+</body>
+</html>

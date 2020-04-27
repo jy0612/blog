@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whpu.blog.dao.CommentDao">
+    <resultMap id="commentMap" type="com.whpu.blog.pojo.Comment">
+        <id property="id" column="id"></id>
+        <result property="nickname" column="nickname"></result>
+        <result property="email" column="email"></result>
+        <result property="content" column="content"></result>
+        <result property="avatar" column="avatar"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="blogId" column="blog_id"></result>
+        <result property="adminComment" column="admin_comment"></result>
+        <association property="parentComment" column="parent_comment_id"
+                     javaType="com.whpu.blog.pojo.Comment" select="selectCommentById"></association>
+    </resultMap>
+    <!--通过评论id查询评论信息(用途通过子评论中的父id查到父评论信息)-->
+    <select id="selectCommentById" resultMap="commentMap">
+        select c.id,c.nickname,c.email,c.content,c.avatar,c.create_time,c.blog_id,c.parent_comment_id,c.admin_comment
+        from tb_comment c where c.id=#{0}
+    </select>
+    <!--新增评论-->
+    <insert id="insertComment" parameterType="com.whpu.blog.pojo.Comment">
+        insert into tb_comment values(default,#{nickname},#{email},
+        #{content},#{avatar},now(),#{blogId},#{parentComment.id},#{adminComment})
+    </insert>
+    <!--通过文章id和parent_comment_id为null查询到某一文章的父评论集合-->
+    <select id="selectCommentsByBlogIdAndParentNoId" parameterType="java.lang.Integer" resultMap="commentMap">
+        select c.id,c.nickname,c.email,c.content,c.avatar,c.create_time,c.blog_id,c.parent_comment_id,c.admin_comment
+        from tb_comment c,tb_blog b where c.blog_id=b.id and c.parent_comment_id is null and b.id=#{0}
+    </select>
+    <!--查询子评论中有parent_comment_id为该父评论id的子评论集合-->
+    <select id="selectChildrenByBlogIdAndParentId" parameterType="java.lang.Integer" resultMap="commentMap">
+        select c.id,c.nickname,c.email,c.content,c.avatar,c.create_time,c.blog_id,c.parent_comment_id,c.admin_comment
+        from tb_comment c where c.blog_id=#{blogId} and c.parent_comment_id=#{parentId}
+    </select>
+</mapper>

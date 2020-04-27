@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: dev
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+  #thymeleaf
+  thymeleaf:
+    cache: false
+# 分页配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+# Mybatis
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.whpu.blog.dto
+  # 设置map-underscore-to-camel-case属性为true来开启驼峰功能。
+  configuration:
+    map-underscore-to-camel-case: true
+# avatar
+comment.avatar: /img/guest.png

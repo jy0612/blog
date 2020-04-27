@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whpu.blog.dao.TagDao">
+    <select id="selectAllTagsByNums" resultType="com.whpu.blog.pojo.Tag">
+        select t.id,t.name,count(bt.tag_id) as nums from tb_tag t,tb_blog_tags bt
+        where t.id=bt.tag_id group by bt.tag_id order by nums desc limit 8
+    </select>
+    <select id="selectAllTagsIncludeNums" resultType="com.whpu.blog.pojo.Tag">
+        select t.id,t.name,count(bt.tag_id) as nums from tb_tag t,tb_blog_tags bt
+        where t.id=bt.tag_id group by bt.tag_id order by nums
+    </select>
+</mapper>

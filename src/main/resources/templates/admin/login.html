@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog后台登录</title>
+  <th:block th:replace="admin/_fragments :: csslink"></th:block>
+</head>
+<body>
+<!--中间内容-->
+<div class="base-container-small base-padded-tb-largest animated rubberBand" style="max-width: 30em !important;">
+  <div class="ui container">
+    <div class="ui middle aligned center aligned grid">
+      <div class="column">
+        <h2 class="ui orange image header">
+          <div class="content">
+            Blog后台登录
+          </div>
+        </h2>
+        <form class="ui large form" method="post" action="#" th:action="@{/admin/login}">
+          <div class="ui segment">
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="user icon"></i>
+                <input type="text" name="username" placeholder="用户名">
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="lock icon"></i>
+                <input type="password" name="password" placeholder="密码">
+              </div>
+            </div>
+            <button class="ui fluid large orange inverted submit button">登  录</button>
+          </div>
+
+          <div class="ui error mini message"></div>
+          <div class="ui negative message mini" th:unless="${#strings.isEmpty(message)}" th:text="${message}"></div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:replace="admin/_fragments ::script"></th:block>
+<script type="text/javascript">
+  $(".ui.form").form({
+    fields: {
+      username: {
+        identifier: 'username',
+        rules:[{
+          type: 'empty',
+          prompt: '输入一下用户名啊喂！٩(ŏ﹏ŏ、)۶'
+        }]
+      },
+      password: {
+        identifier: 'password',
+        rules:[{
+          type: 'empty',
+          prompt: '输入一下密码啊喂！٩(ŏ﹏ŏ、)۶'
+        }]
+      }
+    }
+  })
+
+</script>
+</body>
+</html>
