@@ -54,11 +54,11 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--Druid数据源依赖-->
+        <!--Druid数据源启动器-->
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>1.1.12</version>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.13</version>
         </dependency>
         <!--aop启动器-->
         <dependency>

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: pro
   devtools:
     restart:
       enabled: true  #设置开启热部署
@@ -22,3 +22,5 @@ mybatis:
     map-underscore-to-camel-case: true
 # avatar
 comment.avatar: /img/guest.png
+
+
