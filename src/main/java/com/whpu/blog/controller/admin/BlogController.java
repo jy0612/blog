@@ -2,6 +2,7 @@ package com.whpu.blog.controller.admin;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.whpu.blog.dto.BlogAndTag;
 import com.whpu.blog.dto.BlogQuery;
 import com.whpu.blog.dto.SearchBlog;
 import com.whpu.blog.pojo.Blog;
@@ -80,7 +81,6 @@ public class BlogController {
         List<Type> typeList = typeService.getAllTypes();
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("typeList", typeList);
-        System.out.println(pageInfo);
         return LIST;
     }
 
@@ -99,9 +99,19 @@ public class BlogController {
 
     @PostMapping("/blogs")
     public String post(Blog blog,HttpSession session,RedirectAttributes redirectAttributes){
+        System.out.println(blog);
         User user = (User) session.getAttribute("user");
         blog.setUserId(user.getId());
         int i = blogService.saveBlog(blog);
+        String ids = blog.getTagIds();
+        if(!ids.contains(",")){
+            blogService.saveBlogAndTag(new BlogAndTag(Integer.parseInt(ids),blog.getId()));
+        }else{
+            String[] str = ids.split(",");
+            for (int j=0;j<str.length;j++){
+                blogService.saveBlogAndTag(new BlogAndTag(Integer.parseInt(str[j]),blog.getId()));
+            }
+        }
         if(i==0){
             redirectAttributes.addFlashAttribute("message","新增失败！(´_ゝ`)");
         }else{

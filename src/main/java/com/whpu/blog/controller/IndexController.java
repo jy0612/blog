@@ -74,6 +74,7 @@ public class IndexController {
     @GetMapping("/blog/{id}")
     public String blog(@PathVariable Integer id,Model model){
         DetailedBlog detailedBlog = blogService.getDetailedBlogById(id);
+        System.out.println(detailedBlog);
         model.addAttribute("blog",detailedBlog);
         return "blog";
     }

@@ -43,7 +43,7 @@
         </where>
     </select>
     <!--新增文章-->
-    <insert id="insertBlog" parameterType="com.whpu.blog.pojo.Blog">
+    <insert id="insertBlog" parameterType="com.whpu.blog.pojo.Blog" keyProperty="id" useGeneratedKeys="true">
         insert into tb_blog values(default,#{title},#{content},#{firstPicture},
         #{flag},#{views},#{appreciation},#{shareStatement},#{commentable},
         #{recommend},#{createTime},#{updateTime},#{description},#{typeId},#{userId},#{tagIds})

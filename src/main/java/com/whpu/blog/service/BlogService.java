@@ -36,6 +36,8 @@ public interface BlogService {
 
     Integer getBlogsCount();
 
+    int saveBlogAndTag(BlogAndTag blogAndTag);
+
     int saveBlog(Blog blog);
 
     int updateBlog(Blog blog);

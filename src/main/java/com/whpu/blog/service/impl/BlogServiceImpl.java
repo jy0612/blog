@@ -101,13 +101,17 @@ public class BlogServiceImpl implements BlogService {
 
     @Transactional
     @Override
+    public int saveBlogAndTag(BlogAndTag blogAndTag) {
+        return blogDao.saveBlogAndTag(blogAndTag);
+    }
+
+    @Transactional
+    @Override
     public int saveBlog(Blog blog) {
         blog.setCreateTime(new Date());
         blog.setUpdateTime(new Date());
         blog.setViews(0);
-        String[] str = blog.getTagIds().split(",");
-        for (int i=0;i<str.length;i++)
-            blogDao.saveBlogAndTag(new BlogAndTag(blog.getId(),Integer.parseInt(str[i])));
+
         return blogDao.insertBlog(blog);
     }
 
